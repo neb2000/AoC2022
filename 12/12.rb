@@ -31,23 +31,18 @@ class Grid
   def find_path(start_positions = [start_position])
     possible_routes = start_positions.map { |position| { position: position, steps: 0 } }
     visited_positions = Set.new(start_positions)
-    possible_steps = []
 
     while possible_routes.size > 0 do
       route = possible_routes.shift
-
       possible_next_steps(*route[:position]).each do |next_step|
         unless visited_positions.include?(next_step)
-          if next_step == end_position
-            possible_steps << route[:steps] + 1
-          else
-            possible_routes << { position: next_step, steps: route[:steps] + 1 }
-          end
+          return route[:steps] + 1 if next_step == end_position
+
+          possible_routes << { position: next_step, steps: route[:steps] + 1 }
           visited_positions << next_step
         end
       end
     end
-    possible_steps.min
   end
 end
 

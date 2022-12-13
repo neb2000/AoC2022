@@ -27,25 +27,26 @@ class Monkey < OpenStruct
     @monkeys
   end
 
-  def self.add_monkey(params)
-    @monkeys ||= []
-    @monkeys << new(
-      items:         params['items'].split(/, /).map(&:to_i),
-      formula:       params['formula'],
-      div:           params['div'].to_i,
-      t:             params['t'].to_i,
-      f:             params['f'].to_i,
-      inspect_count: 0
-    )
+  def self.get_worry_level(rounds: 20, include_divider: true)
+    @monkeys = []
+    File.read('input.txt').split(/^\n/).each do |text|
+      params = text.match(REGEX).named_captures
+      @monkeys << new(
+        inspect_count: 0,
+        items:         params['items'].split(/, /).map(&:to_i),
+        formula:       params['formula'],
+        div:           params['div'].to_i,
+        t:             params['t'].to_i,
+        f:             params['f'].to_i
+      )
+    end
+    rounds.times { @monkeys.each { |monkey| monkey.round(include_divider: include_divider) } }
+    result = @monkeys.map(&:inspect_count).max(2).inject(:*)
+    @monkeys = []
+
+    result
   end
 end
 
-File.read('input.txt').split(/^\n/).each do |text|
-  Monkey.add_monkey(text.match(REGEX).named_captures)
-end
-
-# 20.times { Monkey.monkeys.each(&:round) }
-# puts Monkey.monkeys.map(&:inspect_count).max(2).inject(:*)
-
-10_000.times { Monkey.monkeys.each { |monkey| monkey.round(include_divider: false) } }
-puts Monkey.monkeys.map(&:inspect_count).max(2).inject(:*)
+puts Monkey.get_worry_level
+puts Monkey.get_worry_level(rounds: 10_000, include_divider: false)
