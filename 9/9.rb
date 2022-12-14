@@ -9,8 +9,7 @@ def tails_positions_count(knots_size)
     steps.to_i.times do
       knots[0][DIRECTIONS[direction][0]] += DIRECTIONS[direction][1]
 
-      (knots.size - 1).times do |index|
-        current_knot, next_knot = knots.slice(index, 2)
+      knots.each_cons(2) do |(current_knot, next_knot)|
         if (current_knot[0] - next_knot[0]).abs > 1 || (current_knot[1] - next_knot[1]).abs > 1
           next_knot[0] += current_knot[0] <=> next_knot[0]
           next_knot[1] += current_knot[1] <=> next_knot[1]

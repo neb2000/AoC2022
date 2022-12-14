@@ -1,5 +1,7 @@
 require 'set'
+
 occupied_spaces = Set.new
+
 File.foreach('input.txt') do |line|
   line.scan(/(?:(\d+),(\d+))/).map { |pair| pair.map(&:to_i) }.each_cons(2) do |pair|
     start, finish = pair.minmax
@@ -10,19 +12,17 @@ end
 def fill_sand(occupied_spaces, include_floor: false)
   boundry = occupied_spaces.map(&:last).max + (include_floor ? 2 : 0)
   units = 0
-  while !occupied_spaces.include?(sand = [500, 0]) do
-    while (next_space = [
-        [sand[0], sand[1] + 1], [sand[0] - 1, sand[1] + 1], [sand[0] + 1, sand[1] + 1]
-      ].find { |space| !occupied_spaces.include?(space) }) do
+  while !occupied_spaces.include? (x, y = [500, 0]) do
+    while (offset = [0, -1, 1].find { |offset| !occupied_spaces.include?([x + offset, y + 1]) }) do
 
-      if next_space[1] == boundry
+      if y + 1 == boundry
         break if include_floor
         return units
       end
 
-      sand = next_space
+      x, y = [x + offset, y + 1]
     end
-    occupied_spaces << sand
+    occupied_spaces << [x, y]
     units += 1
   end
   units
