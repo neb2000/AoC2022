@@ -23,8 +23,9 @@ class Cave
       state = @states.shift
 
       get_next_states(state).each do |next_state|
-        if next_state[:pressure_released] > max_pressure_for_valve_combinations[next_state[:available_valves]]
-          max_pressure_for_valve_combinations[next_state[:available_valves]] = next_state[:pressure_released]
+        state_key = [next_state[:available_valves], next_state[:positions].map { |position| position[:valve] }]
+        if next_state[:pressure_released] > max_pressure_for_valve_combinations[state_key]
+          max_pressure_for_valve_combinations[state_key] = next_state[:pressure_released]
           overall_max_pressure = [overall_max_pressure, next_state[:pressure_released]].max
           @states << next_state
         end
